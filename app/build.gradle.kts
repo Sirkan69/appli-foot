@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.monpremiereapp"
+    namespace = "com.example.monclassementfoot"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.monpremiereapp"
+        applicationId = "com.example.monclassementfoot"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -39,13 +39,21 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.8.0")
 
-    // Jetpack Compose
+    // Jetpack Compose UI et Material3
     implementation("androidx.compose.ui:ui:1.5.0")
-    implementation("androidx.compose.material:material:1.5.0")
     implementation("androidx.compose.material3:material3:1.2.0")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
+    implementation("androidx.activity:activity-compose:1.8.0")
     debugImplementation("androidx.compose.ui:ui-tooling:1.5.0")
 
-    // Navigation Compose (utile plus tard)
-    implementation("androidx.navigation:navigation-compose:2.6.0")
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.3")
+
+    // Tests unitaires
+    testImplementation("junit:junit:4.13.2")
+
+// import pour choix couleurs equipes
+    implementation("com.google.accompanist:accompanist-flowlayout:0.30.1")
+
+    implementation("androidx.compose.foundation:foundation:1.5.0")
 }

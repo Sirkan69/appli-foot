@@ -1,62 +1,90 @@
-package com.example.monpremiereapp.ui
+package com.example.monclassementfoot.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.example.monclassementfoot.viewmodels.ChampionshipViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateChampionshipScreen(onSaved: (String, String) -> Unit) {
-    var name by remember { mutableStateOf("") }
-    var ageCategory by remember { mutableStateOf("") }
-    var showError by remember { mutableStateOf(false) }
+fun CreateChampionshipScreen(
+    navController: NavHostController,
+    viewModel: ChampionshipViewModel
+) {
+    var nomChamp by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top
-    ) {
-        Text(text = "Créer un championnat", style = MaterialTheme.typography.h5)
-        Spacer(modifier = Modifier.height(16.dp))
+    // Liste des catégories d'âge
+    val categoriesAge = listOf(
+        "U6/U7", "U8/U9", "U10/U11", "U12/U13",
+        "U14/U15", "U16/U17", "U18/U19", "U20",
+        "Séniors", "Vétérans", "Loisirs"
+    )
+
+    var categorieSelectionnee by remember { mutableStateOf(categoriesAge.first()) }
+    var menuOuvert by remember { mutableStateOf(false) }
+
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
 
         OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
+            value = nomChamp,
+            onValueChange = { nomChamp = it },
             label = { Text("Nom du championnat") },
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = ageCategory,
-            onValueChange = { ageCategory = it },
-            label = { Text("Catégorie d'âge (ex: U14, Senior)") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        if (showError) {
-            Text("Veuillez remplir tous les champs", color = MaterialTheme.colors.error)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+        // Menu déroulant pour la catégorie d'âge
+        ExposedDropdownMenuBox(
+            expanded = menuOuvert,
+            onExpandedChange = { menuOuvert = !menuOuvert }
         ) {
-            Button(onClick = {
-                if (name.isBlank() || ageCategory.isBlank()) {
-                    showError = true
-                } else {
-                    showError = false
-                    onSaved(name.trim(), ageCategory.trim())
+            OutlinedTextField(
+                value = categorieSelectionnee,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Catégorie d'âge") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = menuOuvert) },
+                modifier = Modifier.menuAnchor()
+            )
+            ExposedDropdownMenu(
+                expanded = menuOuvert,
+                onDismissRequest = { menuOuvert = false }
+            ) {
+                categoriesAge.forEach { categorie ->
+                    DropdownMenuItem(
+                        text = { Text(categorie) },
+                        onClick = {
+                            categorieSelectionnee = categorie
+                            menuOuvert = false
+                        }
+                    )
                 }
-            }) {
-                Text("Enregistrer")
             }
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Bouton créer championnat
+        Button(
+            onClick = {
+                if (nomChamp.isNotBlank()) {
+                    // On passe le nom et la catégorie sélectionnée
+                    viewModel.creerChampionnat(nomChamp, categorieSelectionnee)
+
+                    // Navigation vers la création d'équipes
+                    navController.navigate("creer_equipe/$nomChamp")
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Créer championnat")
+        }
+
     }
 }
