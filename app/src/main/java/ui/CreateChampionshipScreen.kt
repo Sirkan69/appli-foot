@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.monclassementfoot.ui.components.PageHeader
 import com.example.monclassementfoot.viewmodels.ChampionshipViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,10 +27,9 @@ fun CreateChampionshipScreen(
     var categorieSelectionnee by remember { mutableStateOf(categoriesAge.first()) }
     var menuOuvert by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
-
+    // === On utilise PageHeader ===
+    PageHeader(navController = navController, title = "Créer un championnat") {
+        // Tout le contenu spécifique à cette page
         OutlinedTextField(
             value = nomChamp,
             onValueChange = { nomChamp = it },
