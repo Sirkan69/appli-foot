@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.monclassementfoot.viewmodels.ChampionshipViewModel
-import com.example.monclassementfoot.ui.components.HomeButton
+import com.example.monclassementfoot.ui.components.PageHeader
 import com.example.monclassementfoot.ui.components.VignetteEquipeCard
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -30,12 +30,6 @@ fun ListeEquipesScreen(
     val categorie = viewModel.getCategorie(nomChampionnat)
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = nomChampionnat) },
-                navigationIcon = { HomeButton(navController) }
-            )
-        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = { navController.navigate("creer_equipe/$nomChampionnat") },
@@ -44,73 +38,77 @@ fun ListeEquipesScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+        // On met PageHeader à la place du TopAppBar
+        PageHeader(
+            navController = navController,
+            title = nomChampionnat
         ) {
-            // Bandeau info championnat
-            Card(
+            // Contenu principal de la page
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                elevation = CardDefaults.cardElevation(6.dp)
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                Column(
+                // Bandeau info championnat
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(vertical = 8.dp),
+                    elevation = CardDefaults.cardElevation(6.dp)
                 ) {
-                    Text(
-                        text = "Championnat: $nomChampionnat",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Catégorie: $categorie",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Liste des équipes",
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(equipes) { equipe ->
-                    // Interaction source pour détecter clic / pression
-                    val interactionSource = remember { MutableInteractionSource() }
-                    val isPressed by interactionSource.collectIsPressedAsState()
-                    val elevation by animateDpAsState(targetValue = if (isPressed) 16.dp else 8.dp)
-
-                    VignetteEquipeCard(
-                        nomEquipe = equipe.nom,
-                        couleurStart = equipe.couleurPrincipale,
-                        couleurEnd = equipe.couleurSecondaire,
-                        onClick = {
-                            // Naviguer vers CreerEquipeScreen avec le nom du championnat et de l'équipe
-                            navController.navigate("creer_equipe/$nomChampionnat/${equipe.nom}")
-                        }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
                     ) {
+                        Text(
+                            text = "Championnat: $nomChampionnat",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Catégorie: $categorie",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Liste des équipes",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(equipes) { equipe ->
+                        // Interaction source pour détecter clic / pression
+                        val interactionSource = remember { MutableInteractionSource() }
+                        val isPressed by interactionSource.collectIsPressedAsState()
+                        val elevation by animateDpAsState(targetValue = if (isPressed) 16.dp else 8.dp)
+
+                        VignetteEquipeCard(
+                            nomEquipe = equipe.nom,
+                            couleurStart = equipe.couleurPrincipale,
+                            couleurEnd = equipe.couleurSecondaire,
+                            onClick = {
+                                // Naviguer vers CreerEquipeScreen avec le nom du championnat et de l'équipe
+                                navController.navigate("creer_equipe/$nomChampionnat/${equipe.nom}")
+                            }
+                        ) {
                             Text("Coachs: ${equipe.coachs.size}")
                             Text("Joueurs: ${equipe.joueurs.size}")
                         }
-
+                    }
                 }
             }
         }

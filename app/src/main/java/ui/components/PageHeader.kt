@@ -13,16 +13,12 @@ import androidx.navigation.NavHostController
 fun PageHeader(
     navController: NavHostController,
     title: String,
-    scrollable: Boolean = true, // permet de choisir si le contenu doit défiler
+    scrollable: Boolean = false, // plus nécessaire
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .then(
-                if (scrollable) Modifier.verticalScroll(rememberScrollState())
-                else Modifier
-            )
+            .fillMaxWidth() // juste largeur complète
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
